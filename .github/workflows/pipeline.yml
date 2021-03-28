@@ -8,14 +8,17 @@ on:
     branches: [main]
     types: [opened, synchronize]
   workflow_dispatch:
-    name: 'manual'
+    inputs:
+      trigger:
+        description: 'manual'     
+        required: true
 
 jobs:
   lint_build_deploy:
     runs-on: ubuntu-18.04
     steps:
-      - run: echo "Log Level:\ ${{ github.event.name }}"
-      - run: echo 'Log Level:\ ${{ github.event.name == 'manual' }}'
+      - run: echo "Log Level ${{ github.event.inputs.trigger }}"
+      - run: echo 'Log Level ${{ github.event.inputs.trigger == 'manual' }}'
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
         with:
