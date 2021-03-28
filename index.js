@@ -6,7 +6,7 @@ const app = express()
 const morgan = require('morgan')
 const cors = require('cors')
 const Person = require('./server/models/person')
-
+// testing bump tag
 app.use(express.static('dist'))
 app.use(cors())
 app.use(express.json())
