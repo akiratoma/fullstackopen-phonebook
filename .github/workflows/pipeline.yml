@@ -8,6 +8,7 @@ on:
     branches: [main]
     types: [opened, synchronize]
   workflow_dispatch:
+    name: 'manual'
 
 jobs:
   lint_build_deploy:
@@ -24,7 +25,7 @@ jobs:
       - name: build
         run: npm run build
       - name: deploy to heroku
-        if: ${{ github.event_name == 'push' && !contains(join(toJson(github.event.commits.*.message)), '#skip') }}
+        if: ${{ (github.event_name == 'push' || github.event.name == 'manual') && !contains(join(toJson(github.event.commits.*.message)), '#skip') }}
         uses: akhileshns/heroku-deploy@v3.12.12
         with:
           heroku_api_key: ${{secrets.HEROKU_API_KEY}}
@@ -37,7 +38,7 @@ jobs:
           MONGODB_URI: ${{secrets.MONGODB_URI}}
       - uses: actions/checkout@v2
       - name: Bump version and push tag
-        if: ${{ github.event_name == 'push' && !contains(join(toJson(github.event.commits.*.message)), '#skip') }}
+        if: ${{ (github.event_name == 'push' || github.event.name == 'manual') && !contains(join(toJson(github.event.commits.*.message)), '#skip') }}
         uses: anothrNick/github-tag-action@1.33.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
