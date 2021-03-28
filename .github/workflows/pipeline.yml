@@ -7,6 +7,7 @@ on:
   pull_request:
     branches: [main]
     types: [opened, synchronize]
+  workflow_dispatch:
 
 jobs:
   lint_build_deploy:
@@ -32,6 +33,8 @@ jobs:
           healthcheck: "https://akiratoma-phonebook.herokuapp.com/health"
           checkstring: "ok"
           rollbackonhealthcheckfailed: true
+        env:
+          MONGODB_URI: ${{secrets.MONGODB_URI}}
       - uses: actions/checkout@v2
       - name: Bump version and push tag
         if: ${{ github.event_name == 'push' && !contains(join(toJson(github.event.commits.*.message)), '#skip') }}
