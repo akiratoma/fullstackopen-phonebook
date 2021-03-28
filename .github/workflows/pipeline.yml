@@ -35,7 +35,7 @@ jobs:
           checkstring: "ok"
           rollbackonhealthcheckfailed: true
         env:
-          MONGODB_URI: ${{secrets.MONGODB_URI}}
+          HD_MONGODB_URI: ${{secrets.MONGODB_URI}}
       - uses: actions/checkout@v2
       - name: Bump version and push tag
         if: ${{ (github.event_name == 'push' || github.event.name == 'manual') && !contains(join(toJson(github.event.commits.*.message)), '#skip') }}
