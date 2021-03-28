@@ -10,15 +10,13 @@ on:
   workflow_dispatch:
     inputs:
       trigger:
-        description: 'manual'     
+        description: 'trigger'
         required: true
 
 jobs:
   lint_build_deploy:
     runs-on: ubuntu-18.04
     steps:
-      - run: echo "Log Level ${{ github.event.inputs.trigger }}"
-      - run: echo 'Log Level ${{ github.event.inputs.trigger == 'manual' }}'
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
         with:
@@ -30,7 +28,7 @@ jobs:
       - name: build
         run: npm run build
       - name: deploy to heroku
-        if: ${{ (github.event_name == 'push' || github.event.name == 'manual') && !contains(join(toJson(github.event.commits.*.message)), '#skip') }}
+        if: ${{ (github.event_name == 'push' || github.event.inputs.trigger == 'manual') && !contains(join(toJson(github.event.commits.*.message)), '#skip') }}
         uses: akhileshns/heroku-deploy@v3.12.12
         with:
           heroku_api_key: ${{secrets.HEROKU_API_KEY}}
@@ -43,7 +41,7 @@ jobs:
           HD_MONGODB_URI: ${{secrets.MONGODB_URI}}
       - uses: actions/checkout@v2
       - name: Bump version and push tag
-        if: ${{ (github.event_name == 'push' || github.event.name == 'manual') && !contains(join(toJson(github.event.commits.*.message)), '#skip') }}
+        if: ${{ (github.event_name == 'push' || github.event.inputs.trigger == 'manual') && !contains(join(toJson(github.event.commits.*.message)), '#skip') }}
         uses: anothrNick/github-tag-action@1.33.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
